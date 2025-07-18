@@ -121,12 +121,3 @@ bash
 Este proyecto fue desarrollado como parte del curso de programación de la
 Facultad de Ingeniería de Sistemas - Universidad Nacional del Altiplano, Puno.
 
-
-
-
-
-
-
-
-
-Preguntar a ChatGPT
