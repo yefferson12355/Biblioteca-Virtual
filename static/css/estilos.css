@@ -1,0 +1,194 @@
+/*
+============================================================
+    ESTRUCTURA GENERAL Y FUENTES
+============================================================
+*/
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f8f9fa; /* Fondo gris claro general */
+}
+
+main {
+    flex-grow: 1; /* Mantiene el footer abajo */
+}
+
+
+/*
+============================================================
+    CABECERA Y TÍTULO
+============================================================
+*/
+.header {
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Sombra sutil para la cabecera */
+}
+
+/* Estilo para los enlaces de navegación del menú superior */
+.navbar-nav .nav-link {
+    font-weight: 600;
+    color: #333;
+    margin: 0 10px;
+    transition: all 0.2s ease-in-out; /* Transición suave */
+}
+
+/* --- NUEVO: Efecto hover para los enlaces del menú principal --- */
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: #002d72; /* Color azul oscuro UPN */
+    transform: translateY(-2px);
+}
+
+h1 {
+    font-family: 'Times New Roman', Times, serif;
+    color: #555;
+    font-weight: normal;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+}
+
+/* --- REGLA CORREGIDA Y ÚNICA PARA LA LÍNEA DEBAJO DEL TÍTULO --- */
+.title-line {
+    border-bottom: 4px solid #ffd200; /* Amarillo UPN */
+    width: 80px;
+    margin: 1rem auto;
+}
+
+
+/*
+============================================================
+    TARJETAS DE RECURSOS (Python, Java, C++)
+============================================================
+*/
+.resource-card {
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    border-radius: 10px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+    height: 180px;
+    object-fit: contain;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+/* --- NUEVO: Estilo para el botón oscuro de las tarjetas --- */
+.btn-dark {
+    background-color: #343a40;
+    color: #fff;
+    font-weight: bold;
+    padding: 0.6rem 2rem;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+/* REEMPLAZA CON ESTA REGLA MEJORADA */
+.btn-dark:hover {
+    background-color: #ffd200; /* <-- Fondo amarillo al pasar el mouse */
+    color: #212529;           /* <-- Letras oscuras para que se lean */
+    border-color: #ffd200;    /* <-- Borde amarillo */
+}
+
+/*
+============================================================
+    PIE DE PÁGINA (FOOTER)
+============================================================
+*/
+.footer-main {
+    background-color: #212529;
+    color: #fff;
+    padding: 2.5rem 0;
+}
+.footer-main a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 25px;
+    font-weight: bold;
+}
+.footer-main .social-media {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.footer-main .social-media span {
+    margin-right: 15px;
+    color: #adb5bd;
+}
+.footer-main .social-media i {
+    font-size: 1.5rem;
+    margin-left: 15px;
+    color: #adb5bd;
+    transition: color 0.3s ease;
+}
+.footer-main .social-media i:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    background-color: #212529;
+    color: #adb5bd;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    border-top: 1px solid #343a40;
+}
+.footer-bottom p {
+    margin: 0;
+}
+/*
+============================================================
+    DISEÑO RESPONSIVO (PARA CELULARES Y TABLETS)
+    Estas reglas solo se aplican en pantallas pequeñas.
+============================================================
+*/
+
+/* Para pantallas con un ancho máximo de 768px (tablets en vertical y celulares) */
+@media (max-width: 768px) {
+
+    /* Hacemos el título principal un poco más pequeño para que no ocupe tanto espacio */
+    h1 {
+        font-size: 1.5rem; 
+        letter-spacing: 1px;
+    }
+
+    /* Ajustamos el contenido principal para que no esté tan pegado a los bordes */
+    main.container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /*
+    Cuando los elementos del footer se apilan uno sobre otro en móviles,
+    los centramos para que se vean más ordenados.
+    */
+    .footer-main .footer-links,
+    .footer-main .social-media {
+        text-align: center;
+        justify-content: center; /* Centra los íconos sociales */
+        margin-bottom: 1.5rem; /* Añade espacio entre los enlaces y las redes sociales */
+    }
+
+    .footer-main .social-media span {
+        display: block; /* El texto "Proyecto FIS" ocupa su propia línea */
+        margin-bottom: 0.5rem;
+    }
+}

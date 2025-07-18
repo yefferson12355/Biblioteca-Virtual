@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Programación | FIS - UNA PUNO</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <header class="header shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo de la Institución" style="height: 50px;">
+                    <span class="ms-3 fw-bold fs-5">UNA - PUNO</span>
+                </a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link active" href="{{ url_for('index') }}">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Miembros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Contribuir</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-5 flex-grow-1">
+        <div class="text-center">
+            <h1>BIBLIOTECA DE PROGRAMACIÓN</h1>
+            <p class="lead text-muted">Recursos y libros para estudiantes de Ingeniería de Sistemas</p>
+            <div class="title-line"></div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <article class="card h-100 resource-card">
+                    <img src="{{ url_for('static', filename='img/python.jpeg') }}" class="card-img-top" alt="Logo Python">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="card-title">Libros de Python</h3>
+                        <p class="card-text">Explora nuestra colección de libros de Python, desde guías para principiantes hasta temas avanzados.</p>
+                        <div class="mt-auto text-end">
+                            <a href="{{ url_for('python_page') }}" class="btn btn-dark">Ver Recursos</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <article class="card h-100 resource-card">
+                    <img src="{{ url_for('static', filename='img/java.png') }}" class="card-img-top" alt="Logo Java">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="card-title">Libros de Java</h3>
+                        <p class="card-text">Encuentra manuales sobre Java para desarrollo de aplicaciones empresariales y Android.</p>
+                        <div class="mt-auto text-end">
+                            <a href="{{ url_for('java_page') }}" class="btn btn-dark">Ver Recursos</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <article class="card h-100 resource-card">
+                    <img src="{{ url_for('static', filename='img/c++.jpg') }}" class="card-img-top" alt="Logo C++">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="card-title">Libros de C++</h3>
+                        <p class="card-text">Sumérgete en C++, el potente lenguaje para videojuegos y software de alto rendimiento.</p>
+                        <div class="mt-auto text-end">
+                             <a href="{{ url_for('cpp_page') }}" class="btn btn-dark">Ver Recursos</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer mt-auto">
+    <div class="footer-main">
+        <div class="container">
+            <div class="row d-flex justify-content-between align-items-center">
+                <div class="col-md-6 footer-links">
+                    <a href="#">Reglamento de Uso</a>
+                    <a href="#">Guía para Contribuir</a>
+                </div>
+                <div class="col-md-6 social-media">
+                    <span>Proyecto FIS 2025:</span>
+                    <a href="#"><i class="fa-brands fa-github"></i></a>
+                    <a href="#"><i class="fa-brands fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">
+            <p>Facultad de Ingeniería de Sistemas - Universidad Nacional del Altiplano, Puno</p>
+        </div>
+    </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
