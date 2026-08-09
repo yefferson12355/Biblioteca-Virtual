@@ -1,45 +1,81 @@
-# app.py (Versión Final y Corregida)
-
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 import os
-import sqlite3
 import tempfile
 from werkzeug.utils import secure_filename
+from sqlalchemy import create_engine, text
 
 app = Flask(__name__)
 app.secret_key = 'una_puno_fis_secreto'
 
-if os.environ.get('VERCEL') or os.environ.get('NETLIFY'):
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Si viene con mysql://, le agregamos +pymysql para que SQLAlchemy use el driver correcto
+    if DATABASE_URL.startswith('mysql://'):
+        DATABASE_URL = DATABASE_URL.replace('mysql://', 'mysql+pymysql://', 1)
+    elif DATABASE_URL.startswith('postgres://'):
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+        
+    engine = create_engine(DATABASE_URL, future=True)
     app.config['UPLOAD_FOLDER'] = os.path.join(tempfile.gettempdir(), 'uploads')
-    DATABASE_PATH = os.path.join(tempfile.gettempdir(), 'biblioteca.db')
 else:
+    # Modo Local (SQLite)
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'uploads')
-    DATABASE_PATH = os.path.join(app.root_path, 'biblioteca.db')
+    SQLITE_PATH = os.path.join(app.root_path, 'biblioteca.db')
+    engine = create_engine(f"sqlite:///{SQLITE_PATH}", future=True)
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # --- Lógica de la Base de Datos ---
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
-
 
 def init_db():
-    conn = sqlite3.connect(DATABASE_PATH)
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS libros (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titulo TEXT NOT NULL,
-            autor TEXT,
-            descripcion TEXT,
-            categoria TEXT NOT NULL,
-            ruta_archivo TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
+    with engine.begin() as conn:
+        # Si es MySQL usa AUTO_INCREMENT y VARCHAR, si es SQLite usa AUTOINCREMENT y TEXT
+        if engine.dialect.name == 'mysql':
+            conn.execute(text('''
+                CREATE TABLE IF NOT EXISTS libros (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    titulo VARCHAR(255) NOT NULL,
+                    autor VARCHAR(255),
+                    descripcion TEXT,
+                    categoria VARCHAR(100) NOT NULL,
+                    ruta_archivo VARCHAR(500) NOT NULL
+                )
+            '''))
+        else:
+            conn.execute(text('''
+                CREATE TABLE IF NOT EXISTS libros (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    titulo TEXT NOT NULL,
+                    autor TEXT,
+                    descripcion TEXT,
+                    categoria TEXT NOT NULL,
+                    ruta_archivo TEXT NOT NULL
+                )
+            '''))
 
+def fetch_libros(categoria):
+    with engine.connect() as conn:
+        result = conn.execute(text(
+            "SELECT titulo, autor, descripcion, ruta_archivo "
+            "FROM libros WHERE categoria = :categoria ORDER BY id DESC"
+        ), {"categoria": categoria})
+        return [dict(row) for row in result.mappings().all()]
+
+def insert_libro(titulo, autor, descripcion, categoria, filename):
+    with engine.begin() as conn:
+        conn.execute(text(
+            "INSERT INTO libros (titulo, autor, descripcion, categoria, ruta_archivo) "
+            "VALUES (:titulo, :autor, :descripcion, :categoria, :ruta_archivo)"
+        ), {
+            "titulo": titulo,
+            "autor": autor,
+            "descripcion": descripcion,
+            "categoria": categoria,
+            "ruta_archivo": filename
+        })
+
+# Inicializar la base de datos al arrancar
 init_db()
 
 # --- Rutas de la Aplicación ---
@@ -49,24 +85,17 @@ def index():
 
 @app.route('/python')
 def python_page():
-    conn = get_db_connection()
-    # Usamos los nombres de columna correctos en la consulta
-    libros = conn.execute("SELECT titulo, autor, descripcion, ruta_archivo FROM libros WHERE categoria = 'Python' ORDER BY id DESC").fetchall()
-    conn.close()
+    libros = fetch_libros('Python')
     return render_template('python.html', libros=libros, categoria='Python')
 
 @app.route('/java')
 def java_page():
-    conn = get_db_connection()
-    libros = conn.execute("SELECT titulo, autor, descripcion, ruta_archivo FROM libros WHERE categoria = 'Java' ORDER BY id DESC").fetchall()
-    conn.close()
+    libros = fetch_libros('Java')
     return render_template('java.html', libros=libros, categoria='Java')
 
 @app.route('/cpp')
 def cpp_page():
-    conn = get_db_connection()
-    libros = conn.execute("SELECT titulo, autor, descripcion, ruta_archivo FROM libros WHERE categoria = 'C++' ORDER BY id DESC").fetchall()
-    conn.close()
+    libros = fetch_libros('C++')
     return render_template('cpp.html', libros=libros, categoria='C++')
 
 @app.route('/upload', methods=['POST'])
@@ -81,11 +110,7 @@ def upload_file():
         filename = secure_filename(archivo.filename)
         archivo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         
-        conn = get_db_connection()
-        conn.execute('INSERT INTO libros (titulo, autor, descripcion, categoria, ruta_archivo) VALUES (?, ?, ?, ?, ?)',
-                     (titulo, autor, descripcion, categoria, filename))
-        conn.commit()
-        conn.close()
+        insert_libro(titulo, autor, descripcion, categoria, filename)
         flash(f'¡Libro "{titulo}" subido con éxito!', 'success')
     else:
         flash('Error: No se seleccionó ningún archivo.', 'danger')
