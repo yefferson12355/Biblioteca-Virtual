@@ -3,18 +3,44 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 import os
 import sqlite3
+import tempfile
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = 'una_puno_fis_secreto'
-app.config['UPLOAD_FOLDER'] = 'uploads'
+
+if os.environ.get('VERCEL') or os.environ.get('NETLIFY'):
+    app.config['UPLOAD_FOLDER'] = os.path.join(tempfile.gettempdir(), 'uploads')
+    DATABASE_PATH = os.path.join(tempfile.gettempdir(), 'biblioteca.db')
+else:
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'uploads')
+    DATABASE_PATH = os.path.join(app.root_path, 'biblioteca.db')
+
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # --- Lógica de la Base de Datos ---
 def get_db_connection():
-    conn = sqlite3.connect('biblioteca.db')
+    conn = sqlite3.connect(DATABASE_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def init_db():
+    conn = sqlite3.connect(DATABASE_PATH)
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS libros (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            titulo TEXT NOT NULL,
+            autor TEXT,
+            descripcion TEXT,
+            categoria TEXT NOT NULL,
+            ruta_archivo TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_db()
 
 # --- Rutas de la Aplicación ---
 @app.route('/')
