@@ -55,22 +55,22 @@ def insert_libro(titulo, autor, descripcion, categoria, filename):
 
 @app.route('/')
 def index():
-    return render_template('templates/index.html')
+    return render_template('index.html')
 
 @app.route('/python')
 def python_page():
     libros = fetch_libros('Python')
-    return render_template('templates/python.html', libros=libros, categoria='Python')
+    return render_template('python.html', libros=libros, categoria='Python')
 
 @app.route('/java')
 def java_page():
     libros = fetch_libros('Java')
-    return render_template('templates/java.html', libros=libros, categoria='Java')
+    return render_template('java.html', libros=libros, categoria='Java')
 
 @app.route('/cpp')
 def cpp_page():
     libros = fetch_libros('C++')
-    return render_template('templates/cpp.html', libros=libros, categoria='C++')
+    return render_template('cpp.html', libros=libros, categoria='C++')
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
